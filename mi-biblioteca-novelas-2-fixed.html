@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Biblioteca BL</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f3ee;
+  --surface: #ffffff;
+  --card: #fdfaf6;
+  --border: #e8e0d5;
+  --accent: #c47a5a;
+  --accent2: #8b5e8a;
+  --text: #2c2420;
+  --muted: #9a8a7e;
+  --tag-bg: #f0ebe3;
+  --leido: #5a8a6e;
+  --leyendo: #5a78a8;
+  --porLeer: #a87a5a;
+  --pausado: #a89a5a;
+  --dropped: #a85a5a;
+  --star: #d4873a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 20px 16px;
+  text-align: center;
+}
+.header-logo {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+.header h1 {
+  font-family: 'Lora', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent2);
+  letter-spacing: -0.3px;
+}
+.header p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* NAV TABS */
+.nav {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav::-webkit-scrollbar { display: none; }
+.nav-btn {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.nav-btn.active {
+  color: var(--accent2);
+  border-bottom-color: var(--accent2);
+}
+
+/* STATS PAGE */
+.stats-page { padding: 16px; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+}
+.stat-card .label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.stat-card .value {
+  font-family: 'Lora', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-card .sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.section-card h3 {
+  font-family: 'Lora', serif;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.status-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--tag-bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.status-bar {
+  height: 100%;
+  border-radius: 3px;
+}
+.status-row .label { font-size: 12px; color: var(--text); min-width: 70px; }
+.status-row .count { font-size: 11px; color: var(--muted); min-width: 20px; text-align: right; }
+
+/* LIBRARY PAGE */
+.library-page { padding: 12px 16px; }
+
+.controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.search-wrap {
+  flex: 1;
+  min-width: 160px;
+  position: relative;
+}
+.search-wrap input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px 8px 30px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+}
+.search-wrap input:focus { border-color: var(--accent2); }
+.search-wrap::before {
+  content: '🔍';
+  position: absolute;
+  left: 8px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+}
+
+.filter-scroll {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+  margin-bottom: 12px;
+}
+.filter-scroll::-webkit-scrollbar { display: none; }
+.filter-chip {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+.filter-chip.active {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: white;
+}
+
+.count-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+/* BOOK LIST */
+.book-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.book-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.book-card:hover { border-color: var(--accent2); }
+.book-card.expanded {
+  border-color: var(--accent2);
+  overflow: visible;
+}
+.book-card.expanded .book-card-top {
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+
+.book-card-top {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  align-items: flex-start;
+}
+
+.cover-wrap {
+  width: 54px;
+  height: 76px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--tag-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  position: relative;
+}
+.cover-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cover-placeholder {
+  font-size: 22px;
+  color: var(--muted);
+}
+
+.book-info { flex: 1; min-width: 0; }
+
+.book-title {
+  font-family: 'Lora', serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.book-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+
+.status-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+  color: white;
+}
+
+.stars-display {
+  font-size: 12px;
+  color: var(--star);
+  letter-spacing: -1px;
+}
+
+.date-label {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* EXPANDED BODY */
+.book-body {
+  display: none;
+  border-top: 1px solid var(--border);
+  padding: 12px;
+}
+.book-card.expanded .book-body { display: block; }
+
+.cover-upload-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.cover-preview-big {
+  width: 80px;
+  height: 112px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--tag-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.cover-preview-big img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cover-actions { flex: 1; }
+.cover-actions p {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.cover-url-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+  margin-bottom: 6px;
+}
+.cover-url-input:focus { border-color: var(--accent2); }
+.cover-upload-btn {
+  background: var(--tag-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.note-section {
+  background: #fdf6f0;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  font-style: italic;
+}
+.note-section.empty { color: var(--muted); font-style: normal; }
+
+.edit-section {
+  display: none;
+  margin-bottom: 12px;
+}
+.edit-section.open { display: block; }
+.edit-section textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--accent2);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.book-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.status-select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+  flex: 1;
+}
+.star-editor {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+.star-btn {
+  font-size: 18px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0 1px;
+  color: #ddd;
+  line-height: 1;
+}
+.star-btn.lit { color: var(--star); }
+
+.action-btn {
+  background: var(--tag-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  cursor: pointer;
+}
+.action-btn.primary {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: white;
+}
+
+.dates-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.date-field { flex: 1; }
+.date-field label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.date-field input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+}
+.date-field input:focus { border-color: var(--accent2); }
+
+/* ADD BUTTON */
+.add-btn {
+  position: fixed;
+  bottom: 20px; right: 18px;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--accent2);
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(139,94,138,0.35);
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* MODAL */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  align-items: flex-end;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border-radius: 16px 16px 0 0;
+  border-top: 1px solid var(--border);
+  padding: 20px 16px 32px;
+  width: 100%;
+}
+.modal h3 {
+  font-family: 'Lora', serif;
+  font-size: 17px;
+  margin-bottom: 14px;
+  color: var(--accent2);
+}
+.modal input, .modal select, .modal textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  margin-bottom: 8px;
+  outline: none;
+}
+.modal input:focus, .modal select:focus { border-color: var(--accent2); }
+.modal-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.btn-cancel {
+  flex: 1;
+  background: var(--tag-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  color: var(--text);
+}
+.btn-add {
+  flex: 2;
+  background: var(--accent2);
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* hidden file input */
+#fileInput { display: none; }
+
+/* LOGIN */
+#loginScreen {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px;
+}
+.login-box {
+  width: 100%; max-width: 320px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+}
+.login-box h2 {
+  font-family: 'Lora', serif;
+  font-size: 22px;
+  color: var(--accent2);
+  margin-bottom: 4px;
+}
+.login-box p { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+.login-box input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+  margin-bottom: 10px;
+  text-align: center;
+  letter-spacing: 2px;
+}
+.login-box input:focus { border-color: var(--accent2); }
+.login-btn {
+  width: 100%;
+  background: var(--accent2);
+  border: none;
+  border-radius: 8px;
+  padding: 11px;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+#loginError {
+  display: none;
+  color: #c0392b;
+  font-size: 12px;
+  margin-top: 8px;
+}
+/* YEAR BTN */
+.year-btn {
+  background: var(--tag-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  color: var(--text);
+}
+.year-btn.active {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: white;
+}
+
+</style>
+</head>
+<body>
+
+
+<div id="loginScreen" style="display:none">
+  <div class="login-box">
+    <div style="font-size:36px;margin-bottom:12px">📚</div>
+    <h2>Mi Biblioteca BL</h2>
+    <p>Ingresá tu contraseña</p>
+    <input type="password" id="pwdInput" placeholder="••••••••" autocomplete="off">
+    <button class="login-btn" id="loginBtn">Entrar</button>
+    <div id="loginError">Contraseña incorrecta</div>
+  </div>
+</div>
+<div id="appContent" style="display:none">
+<div class="header">
+  <div class="header-logo">📚</div>
+  <h1>Mi Biblioteca BL</h1>
+  <p id="headerSub">cargando...</p>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" data-page="library">📖 Biblioteca</button>
+  <button class="nav-btn" data-page="stats">📊 Estadísticas</button>
+</nav>
+
+<!-- LIBRARY PAGE -->
+<div class="page active" id="page-library">
+  <div class="library-page">
+    <div class="controls">
+      <div class="search-wrap">
+        <input type="text" id="search" placeholder="Buscar novela...">
+      </div>
+    </div>
+    <div class="filter-scroll" id="filterChips">
+      <button class="filter-chip active" data-filter="all">Todas</button>
+      <button class="filter-chip" data-filter="leido">Leídas</button>
+      <button class="filter-chip" data-filter="leyendo">Leyendo</button>
+      <button class="filter-chip" data-filter="porLeer">Por leer</button>
+      <button class="filter-chip" data-filter="pausado">Pausado</button>
+      <button class="filter-chip" data-filter="dropped">Dropped</button>
+    </div>
+    <div class="count-label" id="countLabel"></div>
+    <div class="book-list" id="bookList"></div>
+  </div>
+</div>
+
+<!-- STATS PAGE -->
+<div class="page" id="page-stats">
+  <div class="stats-page" id="statsContent"></div>
+</div>
+
+<button class="add-btn" id="addBtn">＋</button>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Agregar novela</h3>
+    <input type="text" id="newTitle" placeholder="Título">
+    <select id="newStatus">
+      <option value="porLeer">Por leer</option>
+      <option value="leyendo">Leyendo</option>
+      <option value="leido">Leída</option>
+      <option value="pausado">Pausado</option>
+      <option value="dropped">Dropped</option>
+    </select>
+    <div class="dates-row" style="margin-bottom:8px">
+      <div class="date-field">
+        <label>Inicio</label>
+        <input type="date" id="newDateStart">
+      </div>
+      <div class="date-field">
+        <label>Fin</label>
+        <input type="date" id="newDateEnd">
+      </div>
+    </div>
+    <input type="text" id="newCover" placeholder="URL de portada (opcional)">
+    <div class="modal-btns">
+      <button class="btn-cancel" id="cancelBtn">Cancelar</button>
+      <button class="btn-add" id="confirmAdd">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*">
+
+<script id="seed-data" type="application/json">
+[
+  {"id":1,"title":"Si te enamoras de un «tipo papa», ¡ya no hay salvación!","status":"leido","rating":3.5,"note":"El prota tiene tantas heridas e inseguridades que justo se vino a cruzar a un psicópata acosador que lo adora jaja. No hubo bebés pero por el pasado que tuvo el MC, supongo que se desenvolvieron bien las cosas aunque siempre se separaban y se ponían a prueba sus sentimientos. Fue una lectura rápida y me enganchó de igual manera, los personajes secundarios también tuvieron buen desarrollo.","cover":null,"dateStart":"2026-05-30","dateEnd":"2026-06-07"},
+  {"id":2,"title":"Novia sagrada","status":"leido","rating":4.5,"note":"Por dios los amo tanto, Chiho y Taigan. Los imaginé tan tiernos de niños y ahora de adultos siendo padres y rememorando el pasado me apretujan el corazón. Es fuerte la historia por todo lo que pasó Chiho, la ternura que me provocó al principio tal vez me haya movido mucho el corazón, los paisajes y escenas me las imaginé tan vividamente. Me reconfortó la historia del origen de las alas porque al final volvió al lugar donde debía estar el ser alado. Los hijitos son tan tiernos. Dilate mucho leer el final, me quedo con el sentimiento de ternura que predominó.","cover":null,"dateStart":"2026-05-03","dateEnd":"2026-07-28"},
+  {"id":3,"title":"Es cansado vivir como Omega","status":"leido","rating":3,"note":"Muy bueno, alto plottwist. No sabía que se iba a quedar con el MC original. Me gustaron los extras.","cover":null,"dateStart":"2026-04-19","dateEnd":"2026-05-02"},
+  {"id":4,"title":"La rosa y el desierto","status":"leido","rating":2,"note":"Sinceramente no sé cómo sentirme. El protagonista directamente sucumbió ante el psicópata del ML y lo aceptó sin más. Me hizo acordar al loco de la flor de Aloshya.","cover":null,"dateStart":null,"dateEnd":"2025-06-01"},
+  {"id":5,"title":"Después de pretender ser humano y enamorarse, mi identidad se reveló","status":"leido","rating":3,"note":"Novela china corta con animales que se convierten en humanos — un tigre y un pastor alemán!! Raro pero lindo en partes iguales.","cover":null,"dateStart":"2025-12-31","dateEnd":"2026-01-01"},
+  {"id":6,"title":"Por fin llega la primavera","status":"dropped","rating":1,"note":"Qué protagonista tan tarado, me dio mucha bronca. Me gustaba la premisa pero ¿qué esperaba yo? Lo abandoné.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":7,"title":"La emperatriz fea","status":"leido","rating":4,"note":"Me gustó que el ML aún buscará al MC aunque esté reencarnada tres veces, y de esas tres la primera haya sido aword por el ML.","cover":null,"dateStart":null,"dateEnd":"2025-01-01"},
+  {"id":8,"title":"El diario del Sr. Rong","status":"dropped","rating":1,"note":"No me gustó, no lo terminé de leer.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":9,"title":"El hermoso pequeño esposo del primer ministro","status":"leido","rating":4,"note":"Romance lento, se dedicó más a la cultivación y el crear los cimientos de un pueblo, pero no pude parar de leerlo.","cover":null,"dateStart":null,"dateEnd":"2025-05-22"},
+  {"id":10,"title":"Ser secretario es mi vocación","status":"leido","rating":4,"note":"Me gustó, lloré y me sanó el alma con los extras.","cover":null,"dateStart":"2025-09-02","dateEnd":"2025-09-27"},
+  {"id":11,"title":"Alphega","status":"leido","rating":3.5,"note":"Me gustó la dinámica alfa/alfa y la vida después con el bebé.","cover":null,"dateStart":"2025-11-22","dateEnd":"2025-12-30"},
+  {"id":12,"title":"Suegro Omega","status":"leido","rating":2.5,"note":"Trama con morbo y escenas +18.","cover":null,"dateStart":null,"dateEnd":"2025-01-01"},
+  {"id":13,"title":"Esposo, tu esposa necesita un castigo","status":"leido","rating":2.5,"note":"No es trama compleja, es más hot que otra cosa.","cover":null,"dateStart":null,"dateEnd":"2025-05-02"},
+  {"id":14,"title":"X Patrocinador","status":"dropped","rating":1,"note":"No pude terminarlo, me dan bronca los protagonistas. Perdí tiempo de mi vida leyendo esto.","cover":null,"dateStart":"2026-03-04","dateEnd":null},
+  {"id":15,"title":"Rut Partner","status":"leido","rating":3,"note":"Transmigra en un personaje de novela y por circunstancias se acuesta con el protagonista. Se forman malentendidos y su idea de cómo debe seguir la novela pero ya es muy tarde porque el protagonista cayó muy fuerte por él 💖 Lo terminé, me faltan los extras pero estoy satisfecha.","cover":null,"dateStart":"2025-07-12","dateEnd":"2025-07-17"},
+  {"id":16,"title":"Dirty Shower","status":"leyendo","rating":0,"note":"Disfruto tanto los caps 102+ cuando sufre desgraciado hdp 😭","cover":null,"dateStart":"2025-11-12","dateEnd":null},
+  {"id":17,"title":"El venerable demonio también quiere saber","status":"leido","rating":3.5,"note":"Siento que si hubiera sido el primer danmei que leí hubiera sido considerado mi mejor danmei. Estuvo entretenido, los personajes eran sensatos y la trama bien desarrollada. Había citas explicando los poemas chinos y los poderes. La censura es algo que lamentablemente debo aceptar siempre.","cover":null,"dateStart":"2026-06-06","dateEnd":"2026-06-18"},
+  {"id":18,"title":"DASH","status":"leyendo","rating":0,"note":"Estoy leyendo los extras.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":19,"title":"El cazador quiere vivir tranquilamente","status":"porLeer","rating":0,"note":"Me dan flashbacks de Misión: salvar al cazador. Prota fuerte con ganas de salvar a la humanidad pero que también necesita que alguien lo cuide 😭","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":20,"title":"Misión salvar al cazador - 2da parte","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":21,"title":"Diamond Dust","status":"porLeer","rating":0,"note":"Quiero ver qué es eso del alfa dorado.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":22,"title":"Cosas que deberían morir","status":"leyendo","rating":0,"note":"Terminé la oficial, me faltan los extras.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":23,"title":"7 minutos en el cielo","status":"leyendo","rating":0,"note":"Tiene estereotipos y clichés pero me gusta cómo va la historia. Siento estar viendo una peli yankee.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":24,"title":"Desire Me If You Can","status":"porLeer","rating":0,"note":"Quiero ver al Omega dominante y el alfa dominante del universo Zig.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":25,"title":"Heated Rivalry","status":"porLeer","rating":0,"note":"Vi la serie.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":26,"title":"Golden Stage","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":27,"title":"將进酒 (Qiang Jin Jiu)","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":28,"title":"The Husky y su gato blanco Shizun (2ha)","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":29,"title":"Winterfield","status":"leyendo","rating":0,"note":"Leí el manhwa, ahora empecé la novela.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":30,"title":"Payback (y los otros libros)","status":"porLeer","rating":0,"note":"Me gustaría volver a leerlo, está muy bien escrito. Te amo Yoohan 😭","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":31,"title":"Alpha Trauma","status":"pausado","rating":0,"note":"No puedo seguir leyendo porque ya sé cómo va en el manhwa 😭","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":32,"title":"No nacimos para amar a un alfa","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":33,"title":"Record of the Missing Leader Sect","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":34,"title":"Global examinación","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":35,"title":"Rumor monocromático","status":"pausado","rating":0,"note":"No hay traducción decente.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":36,"title":"Noche de caza","status":"pausado","rating":0,"note":"No sé si terminarlo — re tóxico. Me quedé en la parte que escapó pero lo encontraron y lo llevan al hospital.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":37,"title":"Cuidado con el perro","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":38,"title":"Hey no presiones ese botón","status":"pausado","rating":0,"note":"Me quedé en el tercer volumen cuando las cosas se ponían turbias.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":39,"title":"Kaleidoscope of the Dead","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":40,"title":"Yo ya no te amo","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":41,"title":"Define la relación (vol 7, 8, 9)","status":"porLeer","rating":0,"note":"","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":42,"title":"La tierra está en línea","status":"porLeer","rating":0,"note":"Hay una tradu online que se ve buena.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":43,"title":"Pequeño hongo","status":"porLeer","rating":0,"note":"Sé que se muere el prota 😭 pero los escenarios y el futuro apocalíptico se ven geniales.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":44,"title":"La esposa del maestro legendario","status":"pausado","rating":0,"note":"La dejé en el anteúltimo volumen.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":45,"title":"Por todas tus cosas no tan hermosas","status":"porLeer","rating":0,"note":"El título me encanta y no sé de qué trata jajaja","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":46,"title":"Un brillante contrato de divorcio","status":"pausado","rating":0,"note":"No pude pasar la parte del aborto, me angustié mucho.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":47,"title":"Todos los días el protagonista quiere capturarme","status":"pausado","rating":0,"note":"Me quedé en la misma parte en la que lo dejé y no lo continué desde ahí... ¿qué me pasa?","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":48,"title":"El general ama coleccionar pequeñas flores rojas","status":"pausado","rating":0,"note":"No terminé de leerlo. Siento que fue el primer danmei interestelar y no le caché muy bien.","cover":null,"dateStart":null,"dateEnd":null},
+  {"id":49,"title":"Ganar dinero, exámenes imperiales y mantener a la familia en una vida rural","status":"leyendo","rating":0,"note":"Va lento, ya sé que es así. Al menos un cap por día leo.","cover":null,"dateStart":null,"dateEnd":null}
+]
+</script>
+
+<script>
+const STATUS = {
+  leido:   { label: 'Leída',    color: '#5a8a6e' },
+  leyendo: { label: 'Leyendo',  color: '#5a78a8' },
+  porLeer: { label: 'Por leer', color: '#a87a5a' },
+  pausado: { label: 'Pausado',  color: '#a89a5a' },
+  dropped: { label: 'Dropped',  color: '#a85a5a' },
+};
+
+let data = [];
+let nextId = 100;
+let activeFilter = 'all';
+let searchQ = '';
+let expandedId = null;
+let activePage = 'library';
+let editingCoverId = null;
+let statsYear = null;
+
+function simpleHash(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = Math.imul(31, h) + s.charCodeAt(i) | 0; }
+  return Math.abs(h).toString(16);
+}
+const CORRECT = simpleHash('nubesbondadosas');
+function checkLogin() { return sessionStorage.getItem('bl_auth') === CORRECT; }
+function showLogin() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appContent').style.display = 'none';
+}
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appContent').style.display = 'block';
+}
+document.getElementById('loginBtn').addEventListener('click', () => {
+  const val = document.getElementById('pwdInput').value;
+  if (simpleHash(val) === CORRECT) {
+    sessionStorage.setItem('bl_auth', CORRECT);
+    showApp(); load(); render();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+});
+document.getElementById('pwdInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('loginBtn').click();
+});
+
+function load() {
+  const saved = localStorage.getItem('bl_novelas_v1');
+  if (saved) {
+    try {
+      const p = JSON.parse(saved);
+      data = p.data || [];
+      nextId = p.nextId || 100;
+    } catch { seedData(); }
+  } else { seedData(); }
+}
+
+function seedData() {
+  const el = document.getElementById('seed-data');
+  data = JSON.parse(el.textContent);
+  nextId = 100;
+  save();
+}
+
+function save() {
+  localStorage.setItem('bl_novelas_v1', JSON.stringify({ data, nextId }));
+}
+
+function starsHtml(rating, size = 14) {
+  if (!rating) return '';
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  let s = '';
+  for (let i = 1; i <= 5; i++) {
+    if (i <= full) s += '★';
+    else if (i === full + 1 && half) s += '½';
+    else s += '☆';
+  }
+  return `<span class="stars-display" style="font-size:${size}px">${s}</span>`;
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const [y, m] = d.split('-');
+  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${months[+m-1]} ${y}`;
+}
+
+function imgError(el) {
+  const p = el.parentElement;
+  if (p) p.innerHTML = '<span style="font-size:22px">📖</span>';
+}
+function coverHtml(item, w, h) {
+  if (item.cover) {
+    return '<img src="' + item.cover + '" alt="" style="width:' + w + 'px;height:' + h + 'px;object-fit:cover;border-radius:6px;display:block" onerror="imgError(this)">';
+  }
+  return '<div style="width:' + w + 'px;height:' + h + 'px;background:var(--tag-bg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px">📖</div>';
+}
+
+function getFiltered() {
+  return data.filter(item => {
+    if (activeFilter !== 'all' && item.status !== activeFilter) return false;
+    if (searchQ && !item.title.toLowerCase().includes(searchQ.toLowerCase())) return false;
+    return true;
+  });
+}
+
+// ---- RENDER ----
+function renderHeader() {
+  const total = data.length;
+  const leidas = data.filter(d => d.status === 'leido').length;
+  document.getElementById('headerSub').textContent = `${total} novelas · ${leidas} leídas`;
+}
+
+function renderList() {
+  const items = getFiltered();
+  document.getElementById('countLabel').textContent = `${items.length} novela${items.length !== 1 ? 's' : ''}`;
+  const list = document.getElementById('bookList');
+
+  if (items.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-style:italic">No hay novelas que coincidan ✨</div>';
+    return;
+  }
+
+  list.innerHTML = items.map(item => {
+    const s = STATUS[item.status];
+    const isExp = expandedId === item.id;
+    const dateStr = item.dateEnd ? formatDate(item.dateEnd) : (item.dateStart ? `desde ${formatDate(item.dateStart)}` : '');
+
+    // Star editor buttons
+    const starBtns = [1,2,3,4,5].map(i => {
+      const lit = item.rating >= i ? 'lit' : (item.rating >= i - 0.5 && item.rating < i ? 'lit' : '');
+      return `<button class="star-btn ${item.rating >= i ? 'lit' : ''}" data-id="${item.id}" data-star="${i}">★</button>`;
+    }).join('');
+
+    return `
+    <div class="book-card ${isExp ? 'expanded' : ''}" data-id="${item.id}">
+      <div class="book-card-top">
+        <div class="cover-wrap">${coverHtml(item, 54, 76)}</div>
+        <div class="book-info">
+          <div class="book-title">${item.title}</div>
+          <div class="book-meta">
+            <span class="status-badge" style="background:${s.color}">${s.label}</span>
+            ${item.rating ? starsHtml(item.rating) : ''}
+          </div>
+          ${dateStr ? `<div class="date-label">${dateStr}</div>` : ''}
+        </div>
+      </div>
+      <div class="book-body">
+        <!-- COVER -->
+        <div class="cover-upload-row">
+          <div class="cover-preview-big" id="bigcover-${item.id}">${coverHtml(item, 80, 112)}</div>
+          <div class="cover-actions">
+            <p>Portada</p>
+            <input class="cover-url-input" id="coverUrl-${item.id}" placeholder="Pegar URL de imagen..." value="${item.cover && item.cover.startsWith('data:') ? '' : (item.cover || '')}" data-id="${item.id}" ${item.cover && item.cover.startsWith('data:') ? 'title="Imagen subida desde el cel"' : ''}>
+            <button class="cover-upload-btn" data-upload="${item.id}">📷 Subir desde cel</button>
+            ${item.cover ? '<button class="cover-upload-btn" style="margin-top:4px;color:var(--dropped)" data-clearcov="' + item.id + '">✕ Quitar portada</button>' : ''}
+          </div>
+        </div>
+        <!-- FECHAS -->
+        <div class="dates-row">
+          <div class="date-field">
+            <label>Inicio</label>
+            <input type="date" id="dateStart-${item.id}" value="${item.dateStart || ''}" data-id="${item.id}" data-field="dateStart">
+          </div>
+          <div class="date-field">
+            <label>Fin</label>
+            <input type="date" id="dateEnd-${item.id}" value="${item.dateEnd || ''}" data-id="${item.id}" data-field="dateEnd">
+          </div>
+        </div>
+        <!-- NOTA -->
+        ${item.note
+          ? `<div class="note-section">${item.note}</div>`
+          : `<div class="note-section empty">Sin nota aún...</div>`
+        }
+        <div class="edit-section" id="edit-${item.id}">
+          <textarea id="notearea-${item.id}" placeholder="Escribí tus notas...">${item.note || ''}</textarea>
+          <button class="action-btn primary" data-savenote="${item.id}">💾 Guardar nota</button>
+        </div>
+        <!-- ACCIONES -->
+        <div class="book-actions">
+          <select class="status-select" data-id="${item.id}" data-statusselect>
+            ${Object.entries(STATUS).map(([k,v]) => `<option value="${k}" ${item.status===k?'selected':''}>${v.label}</option>`).join('')}
+          </select>
+          <div class="star-editor">${starBtns}</div>
+          <button class="action-btn" data-editnote="${item.id}">✏️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderStats() {
+  const counts = { leido: 0, leyendo: 0, porLeer: 0, pausado: 0, dropped: 0 };
+  data.forEach(d => counts[d.status]++);
+  const leidas = data.filter(d => d.status === 'leido');
+  const rated = leidas.filter(d => d.rating);
+  const avgRating = rated.length
+    ? (rated.reduce((a,b)=>a+b.rating,0) / rated.length).toFixed(1) : '—';
+  const total = data.length;
+  const maxCount = Math.max(...Object.values(counts), 1);
+
+  // Build year/month stats from dateEnd
+  const byYear = {};
+  const byYearMonth = {};
+  const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+  data.filter(d => d.dateEnd && d.status === 'leido').forEach(d => {
+    const [y, m] = d.dateEnd.split('-');
+    const yr = +y; const mo = +m - 1;
+    if (!byYear[yr]) byYear[yr] = [];
+    byYear[yr].push(d);
+    const key = `${yr}-${String(mo+1).padStart(2,'0')}`;
+    if (!byYearMonth[key]) byYearMonth[key] = [];
+    byYearMonth[key].push(d);
+  });
+
+  const years = Object.keys(byYear).sort((a,b)=>b-a);
+  const selectedYear = statsYear || (years[0] ? +years[0] : new Date().getFullYear());
+
+  // Month bars for selected year
+  const monthData = Array.from({length:12}, (_,i) => {
+    const key = `${selectedYear}-${String(i+1).padStart(2,'0')}`;
+    return { month: MONTHS[i], count: (byYearMonth[key]||[]).length, books: byYearMonth[key]||[] };
+  });
+  const maxMonth = Math.max(...monthData.map(m=>m.count), 1);
+
+  document.getElementById('statsContent').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Total novelas</div>
+        <div class="value">${total}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Leídas</div>
+        <div class="value">${counts.leido}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Rating promedio</div>
+        <div class="value">${avgRating}</div>
+        <div class="sub">sobre 5 estrellas</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">En progreso</div>
+        <div class="value">${counts.leyendo}</div>
+      </div>
+    </div>
+
+    <!-- POR AÑO -->
+    <div class="section-card">
+      <h3>📅 Por año</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        ${years.map(y => `
+          <button class="year-btn ${+y===selectedYear?'active':''}" data-year="${y}">${y} <span style="opacity:.6;font-size:10px">${byYear[y].length}</span></button>
+        `).join('')}
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:4px;height:80px;margin-bottom:8px">
+        ${monthData.map(m => `
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+            <div style="font-size:9px;color:var(--muted);height:16px;line-height:16px">${m.count||''}</div>
+            <div style="width:100%;background:${m.count ? 'var(--accent2)' : 'var(--tag-bg)'};border-radius:3px 3px 0 0;height:${m.count ? Math.max(8, m.count/maxMonth*44) : 4}px;opacity:${m.count?1:0.4}"></div>
+          </div>
+        `).join('')}
+      </div>
+      <div style="display:flex;gap:4px">
+        ${monthData.map(m => `<div style="flex:1;text-align:center;font-size:8px;color:var(--muted)">${m.month.slice(0,1)}</div>`).join('')}
+      </div>
+      <div style="margin-top:12px">
+        ${monthData.filter(m=>m.count>0).map(m => `
+          <div style="margin-bottom:8px">
+            <div style="font-size:11px;font-weight:500;color:var(--muted);margin-bottom:4px">${m.month} ${selectedYear} · ${m.count} novela${m.count!==1?'s':''}</div>
+            ${m.books.map(b=>`
+              <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border)">
+                <div style="flex:1;font-size:12px">${b.title}</div>
+                ${b.rating ? starsHtml(b.rating,11) : ''}
+              </div>
+            `).join('')}
+          </div>
+        `).join('')}
+        ${monthData.every(m=>!m.count) ? '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">Sin novelas terminadas en ' + selectedYear + '</div>' : ''}
+      </div>
+    </div>
+
+    <!-- POR ESTADO -->
+    <div class="section-card">
+      <h3>Por estado</h3>
+      ${Object.entries(STATUS).map(([k,v]) => `
+        <div class="status-row">
+          <span class="label">${v.label}</span>
+          <div class="status-bar-wrap">
+            <div class="status-bar" style="width:${(counts[k]/maxCount*100)}%;background:${v.color}"></div>
+          </div>
+          <span class="count">${counts[k]}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- RANKING -->
+    <div class="section-card">
+      <h3>⭐ Mejor puntuadas</h3>
+      ${rated.sort((a,b)=>b.rating-a.rating).map(d => `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div style="flex:1;font-size:13px">${d.title}</div>
+          ${starsHtml(d.rating, 12)}
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // Year buttons
+  document.querySelectorAll('.year-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      statsYear = +btn.dataset.year;
+      renderStats();
+    });
+  });
+}
+
+function render() {
+  renderHeader();
+  if (activePage === 'library') renderList();
+  if (activePage === 'stats') renderStats();
+}
+
+// ---- EVENTS ----
+document.getElementById('bookList').addEventListener('click', e => {
+  const card = e.target.closest('.book-card');
+  if (!card) return;
+  const id = +card.dataset.id;
+
+  // Status select
+  if (e.target.dataset.statusselect !== undefined || e.target.matches('[data-statusselect]')) {
+    return; // handled by change event
+  }
+
+  // Stars
+  if (e.target.matches('.star-btn')) {
+    const item = data.find(d => d.id === +e.target.dataset.id);
+    if (item) { item.rating = +e.target.dataset.star; save(); render(); expandedId = id; render(); }
+    return;
+  }
+
+  // Edit note toggle
+  if (e.target.dataset.editnote) {
+    const editEl = document.getElementById(`edit-${e.target.dataset.editnote}`);
+    if (editEl) editEl.classList.toggle('open');
+    return;
+  }
+
+  // Save note
+  if (e.target.dataset.savenote) {
+    const noteId = +e.target.dataset.savenote;
+    const item = data.find(d => d.id === noteId);
+    const ta = document.getElementById(`notearea-${noteId}`);
+    if (item && ta) { item.note = ta.value; save(); expandedId = id; render(); }
+    return;
+  }
+
+  // Clear cover
+  if (e.target.dataset.clearcov) {
+    const item = data.find(d => d.id === +e.target.dataset.clearcov);
+    if (item) { item.cover = null; save(); expandedId = id; render(); }
+    return;
+  }
+
+  // Upload cover
+  if (e.target.dataset.upload) {
+    editingCoverId = +e.target.dataset.upload;
+    document.getElementById('fileInput').click();
+    return;
+  }
+
+  // Toggle expand
+  expandedId = expandedId === id ? null : id;
+  render();
+});
+
+// Status select change
+document.getElementById('bookList').addEventListener('change', e => {
+  if (e.target.dataset.id && e.target.matches('select')) {
+    const item = data.find(d => d.id === +e.target.dataset.id);
+    if (item) { item.status = e.target.value; save(); render(); expandedId = +e.target.dataset.id; render(); }
+  }
+  // Date fields
+  if (e.target.dataset.field) {
+    const item = data.find(d => d.id === +e.target.dataset.id);
+    if (item) { item[e.target.dataset.field] = e.target.value; save(); }
+  }
+});
+
+// Cover URL input
+document.getElementById('bookList').addEventListener('input', e => {
+  if (e.target.matches('.cover-url-input')) {
+    const id = +e.target.dataset.id;
+    const item = data.find(d => d.id === id);
+    if (item) {
+      item.cover = e.target.value.trim() || null;
+      save();
+      const bigCover = document.getElementById(`bigcover-${id}`);
+      if (bigCover) bigCover.innerHTML = coverHtml(item, 80, 112);
+      // Update small cover too
+      const cardTop = e.target.closest('.book-card')?.querySelector('.cover-wrap');
+      if (cardTop) cardTop.innerHTML = coverHtml(item, 54, 76);
+    }
+  }
+});
+
+// File upload
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file || !editingCoverId) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const item = data.find(d => d.id === editingCoverId);
+    if (item) {
+      item.cover = ev.target.result;
+      save();
+      expandedId = editingCoverId;
+      render();
+    }
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+
+// Search
+document.getElementById('search').addEventListener('input', e => {
+  searchQ = e.target.value;
+  render();
+});
+
+// Filter chips
+document.getElementById('filterChips').addEventListener('click', e => {
+  if (e.target.dataset.filter) {
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    activeFilter = e.target.dataset.filter;
+    render();
+  }
+});
+
+// Nav
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activePage = btn.dataset.page;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${activePage}`).classList.add('active');
+    render();
+  });
+});
+
+// Add modal
+document.getElementById('addBtn').addEventListener('click', () => {
+  document.getElementById('modalBg').classList.add('open');
+});
+document.getElementById('cancelBtn').addEventListener('click', () => {
+  document.getElementById('modalBg').classList.remove('open');
+});
+document.getElementById('modalBg').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalBg'))
+    document.getElementById('modalBg').classList.remove('open');
+});
+document.getElementById('confirmAdd').addEventListener('click', () => {
+  const title = document.getElementById('newTitle').value.trim();
+  if (!title) return;
+  data.unshift({
+    id: nextId++,
+    title,
+    status: document.getElementById('newStatus').value,
+    rating: 0,
+    note: '',
+    cover: document.getElementById('newCover').value.trim() || null,
+    dateStart: document.getElementById('newDateStart').value || null,
+    dateEnd: document.getElementById('newDateEnd').value || null,
+  });
+  save();
+  document.getElementById('modalBg').classList.remove('open');
+  document.getElementById('newTitle').value = '';
+  document.getElementById('newCover').value = '';
+  document.getElementById('newDateStart').value = '';
+  document.getElementById('newDateEnd').value = '';
+  render();
+});
+
+if (checkLogin()) {
+  showApp();
+  load();
+  render();
+} else {
+  showLogin();
+}
+</script>
+</div>
+</body>
+</html>
